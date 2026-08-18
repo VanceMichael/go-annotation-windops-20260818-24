@@ -91,13 +91,11 @@ func overlap(aStart, aEnd, bStart, bEnd time.Time) bool {
 }
 
 func auditAtomicMissing(flags map[string]bool) []string {
-	writeStates := map[string]bool{
-		"business_written": flags["business_written"],
-		"audit_written":    flags["audit_written"],
-	}
-	missing := make([]string, 0, len(writeStates))
-	for key, ready := range writeStates {
-		if !ready {
+	required := []string{"business_written", "audit_written", "same_transaction"}
+	missing := make([]string, 0, len(required))
+	for _, key := range required {
+		ready, present := flags[key]
+		if !present || !ready {
 			missing = append(missing, key)
 		}
 	}

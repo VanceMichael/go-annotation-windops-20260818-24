@@ -9,8 +9,7 @@ func EvaluateAuditBelongsToTransaction(ctx Context) (Result, error) {
 	if err := requireTenant(ctx, "policy.audit_transaction"); err != nil {
 		return Result{}, err
 	}
-	atomicFlags := map[string]bool{"business_written": ctx.Flags["business_written"], "audit_written": ctx.Flags["audit_written"]}
-	missing := auditAtomicMissing(atomicFlags)
+	missing := auditAtomicMissing(ctx.Flags)
 	if len(missing) > 0 {
 		result := deny("audit_atomicity", "business mutation and audit event are not atomic")
 		result.IDs = missing
